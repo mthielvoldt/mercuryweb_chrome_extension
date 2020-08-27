@@ -5,27 +5,11 @@ function sendReservationsRequest(callback) {
   reservationsForm = document.getElementById("panelSixForm");
   let xhr = new XMLHttpRequest();
   let formData = new FormData(reservationsForm)
-  formData.append("javax.faces.source", "panelSixForm:memberOwnLink");
-  formData.append("javax.faces.partial.execute", "@all");
-  formData.append("javax.faces.partial.render", "@all");
-  formData.append("ice.focus", "panelSixForm:memberOwnLink_link");
-  formData.append("ice.event.target", "panelSixForm:memberOwnLink_link");
-  formData.append("ice.event.captured", "panelSixForm:memberOwnLink");
-  formData.append("ice.event.type", "onclick");
-  formData.append("ice.event.x", "756");
-  formData.append("ice.event.y", "429");
-  formData.append("ice.event.left", "true");
-  formData.append("javax.faces.partial.ajax", "true");
-  formData.append("panelSixForm:memberOwnLink", "panelSixForm:memberOwnLink");
-  formData.append("ice.event.alt", "false");
-  formData.append("ice.event.ctlr", "false");
-  formData.append("ice.event.shift", "false");
-  formData.append("ice.event.meta", "false");
-  formData.append("ice.event.right", "false");
+  
+  formData.append("javax.faces.partial.execute", "@all"); // essential
+  formData.append("ice.event.captured", "panelSixForm:memberOwnLink"); // essential
+
   const queryString = new URLSearchParams(formData).toString()
-  // for ([key, value] of formData.entries()) {
-  //   console.log(key, value)
-  // }
   
   xhr.open("POST", 'https://mercuryweb.berkeley.edu/MercuryWeb/faces/pages/reserve/Reservations.xhtml')
   xhr.onreadystatechange = xhrReturned;
@@ -57,6 +41,8 @@ function sendReservationsRequest(callback) {
           reservations.push({equipment, beginTime, endTime})
         }
         callback(reservations)
+        // for some reason, I need to reload after this xhr call
+        window.location.reload(false); 
       }
     }
   }

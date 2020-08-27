@@ -1,27 +1,21 @@
 
-  let formData = new FormData();
-  formData.append("panelSixForm", "panelSixForm");
-  formData.append("ice.window", "ifkebmwq6g");
-  formData.append("ice.view", "1vkebj7s82:1cmr");
-  formData.append("panelSixForm:defaultActionOnEnter", "");
-  formData.append("javax.faces.ViewState", "-8186864382383032917:-5400668219778851212");
-  formData.append("javax.faces.source", "panelSixForm:memberOwnLink");
-  formData.append("javax.faces.partial.execute", "@all");
-  formData.append("javax.faces.partial.render", "@all");
-  formData.append("ice.focus", "panelSixForm:memberOwnLink_link");
-  formData.append("ice.event.target", "panelSixForm:memberOwnLink_link");
-  formData.append("ice.event.captured", "panelSixForm:memberOwnLink");
-  formData.append("ice.event.type", "onclick");
-  formData.append("ice.event.x", "756");
-  formData.append("ice.event.y", "429");
-  formData.append("ice.event.left", "true");
-  formData.append("javax.faces.partial.ajax", "true");
-  formData.append("panelSixForm:memberOwnLink", "panelSixForm:memberOwnLink");
-  formData.append("ice.event.alt", "false");
-  formData.append("ice.event.ctlr", "false");
-  formData.append("ice.event.shift", "false");
-  formData.append("ice.event.meta", "false");
-  formData.append("ice.event.right", "false");
+non-essential formdata for reservation history request
+
+  //formData.append("javax.faces.partial.render", "@all");
+  //formData.append("ice.event.target", "panelSixForm:memberOwnLink_link");
+  //formData.append("javax.faces.source", "panelSixForm:memberOwnLink");
+  //formData.append("javax.faces.partial.ajax", "true");
+  //formData.append("panelSixForm:memberOwnLink", "panelSixForm:memberOwnLink");
+  //formData.append("ice.focus", "panelSixForm:memberOwnLink_link");
+  //formData.append("ice.event.type", "onclick");
+  //formData.append("ice.event.left", "true");
+  // formData.append("ice.event.x", "756");
+  // formData.append("ice.event.y", "429");
+  // formData.append("ice.event.alt", "false");
+  // formData.append("ice.event.ctlr", "false");
+  // formData.append("ice.event.shift", "false");
+  // formData.append("ice.event.meta", "false");
+  // formData.append("ice.event.right", "false");
   
 
 function sendReservationsRequest() {
