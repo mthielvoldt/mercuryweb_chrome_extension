@@ -1,0 +1,20 @@
+Accept: */*
+Accept-Encoding: gzip, deflate, br
+Accept-Language: en-US,en;q=0.9
+Connection: keep-alive
+Content-Length: 177
+Content-type: application/x-www-form-urlencoded;charset=UTF-8
+Cookie: JSESSIONID=F6900B70C8D4594B40B1DEB342FDEBA6; ice.push.browser=1vkebj7s82; _ga=GA1.2.323869332.1598462289; _gid=GA1.2.2032132741.1598462289; mwb2_timeout=
+Faces-Request: partial/ajax
+Host: mercuryweb.berkeley.edu
+Origin: https://mercuryweb.berkeley.edu
+Referer: https://mercuryweb.berkeley.edu/MercuryWeb/
+Sec-Fetch-Dest: empty
+Sec-Fetch-Mode: cors
+Sec-Fetch-Site: same-origin
+User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.83 Safari/537.36
+panelSixForm: panelSixForm
+ice.window: ifkebpwe0a
+ice.view: 1vkebj7s82:1cq1
+panelSixForm:defaultActionOnEnter: 
+javax.faces.ViewState: -8091684321395026014:-8940524099123151945

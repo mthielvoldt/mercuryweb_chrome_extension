@@ -1,0 +1,35 @@
+{
+  "name": "MercuryWeb reservation calculator",
+  "version": "0.1",
+  "description": "Easily view remaining core-hour reservation time.",
+  "permissions": [
+    "storage",
+    "declarativeContent",
+    "activeTab",
+    "https://mercuryweb.berkeley.edu/*"
+  ],
+  "background": {
+    "scripts": [
+      "background.js"
+    ],
+    "persistent": false
+  },
+  "content_scripts": [{
+    "matches": ["*://mercuryweb.berkeley.edu/MercuryWeb/"],
+    "js": ["content_script.js"]
+  }],
+  "page_action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "24": "images/clock-24.png",
+      "32": "images/clock-32.png",
+      "64": "images/clock-64.png"
+    }
+  },
+  "icons": {
+    "24": "images/clock-24.png",
+    "32": "images/clock-32.png",
+    "64": "images/clock-64.png"
+  },
+  "manifest_version": 2
+}
