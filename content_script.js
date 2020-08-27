@@ -1,7 +1,7 @@
 
 
 
-function sendReservationsRequest() {
+function sendReservationsRequest(callback) {
   reservationsForm = document.getElementById("panelSixForm");
   let xhr = new XMLHttpRequest();
   let formData = new FormData(reservationsForm)
@@ -57,12 +57,17 @@ function sendReservationsRequest() {
           endTime.push(row.children[4].firstElementChild.innerText);
         }
 
-        
-
+        callback({equipment:equipment, beginTime:beginTime, endTime:endTime})
       }
     }
   }
 }
 
-function 
-sendReservationsRequest()
+chrome.runtime.onMessage.addListener((msg, sender, callback) => {
+  if ((msg.from === 'popup') && (msg.subject === 'ReservationData')) {
+    sendReservationsRequest(callback)
+  }
+  return true
+})
+
+console.log("I'm here")

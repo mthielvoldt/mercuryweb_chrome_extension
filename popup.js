@@ -19,31 +19,26 @@ changeColor.onclick = function(element) {
   console.log("Changed to green")
 };
 
-
-injectBtn.onclick = function(element) {
-  chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-    chrome.tabs.executeScript(
-        tabs[0].id,
-        {file: "content_script.js"}, 
-        (results) => {
-          console.log(results[0])
-        }
-      );
-  });
+function processReservations(reservationData) {
+  console.log(reservationData)
 }
-
 
 reservationsBtn.onclick = function(element) {
   console.log("getReservations button clicked")
 
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-    chrome.tabs.executeScript(
-        tabs[0].id,
-        {code: 'clickMyResLink()'}, 
-        (results) => {
-          console.log(results[0])
-        }
-      );
+    // use a message to trigger the content_script to get reservations. 
+    chrome.tabs.sendMessage(
+      tabs[0].id,
+      {from: "popup", subject: 'ReservationData'}, processReservations); 
+
+    // chrome.tabs.executeScript(
+    //     tabs[0].id,
+    //     {code: 'sendReservationsRequest()'}, 
+    //     (results) => {
+    //       console.log(results)
+    //     }
+    //   );
   });
   
 }
