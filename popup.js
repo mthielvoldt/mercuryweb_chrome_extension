@@ -1,7 +1,8 @@
 let changeColor = document.getElementById('changeColor');
 let reservationsBtn = document.getElementById('resBtn');
-let injectBtn = document.getElementById('injectBtn');
+let recalculateBtn = document.getElementById('recalculate');
 let availableP = document.getElementById('available');
+let reservations = null
 
 chrome.storage.sync.get('color', function(data) {
   // on load of stored value, set the button attributes and style
@@ -19,6 +20,8 @@ changeColor.onclick = function(element) {
   console.log("Changed to green")
 };
 
+recalculateBtn.onclick = () => {processReservations(null)}
+
 reservationsBtn.onclick = function(element) {
   console.log("getReservations button clicked")
 
@@ -30,8 +33,32 @@ reservationsBtn.onclick = function(element) {
   });
 }
 
-function processReservations(reservationData) {
-  console.log(reservationData)
+function processReservations(reservationData=null) {
+  if (reservationData != null) {
+    reservations = reservationData
+  }
+  console.log(reservations)
+
+  function filterFn(reservation) {
+    cutoffDate = Date.now() - 3600000*24*14
+    reservationDate = Date.parse(reservation.endTime)
+    within14Days = reservationDate > cutoffDate
+    return (reservation.equipment === 'nanolab') && within14Days
+  }
+  
+  relevant = reservations.filter(filterFn)
+  console.log(relevant)
+
   // calculate the amount of time available right now. 
-  relevant = reservationData.filter()
+  timeAvailable = 24 - relevant.reduce(reduceFn, 0)
+
+  function reduceFn(prevTotal, reservation) {
+    end   = Date.parse(reservation.endTime)
+    begin = Date.parse(reservation.beginTime) 
+    resHours = (end - begin)/1000/3600
+    console.log(resHours)
+    return prevTotal + resHours
+  }
+
+  
 }
