@@ -1,26 +1,7 @@
-let changeColor = document.getElementById('changeColor');
 let reservationsBtn = document.getElementById('resBtn');
-let recalculateBtn = document.getElementById('recalculate');
 let availableP = document.getElementById('available');
 let reservations = null
 
-chrome.storage.sync.get('color', function(data) {
-  // on load of stored value, set the button attributes and style
-  changeColor.style.backgroundColor = data.color;
-  changeColor.setAttribute('value', data.color);
-});
-
-changeColor.onclick = function(element) {
-  let color = element.target.value;
-  chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-    chrome.tabs.executeScript(
-        tabs[0].id,
-        {code: 'document.body.style.backgroundColor = "' + color + '";'});
-  });
-  console.log("Changed to green")
-};
-
-recalculateBtn.onclick = () => {processReservations(null)}
 
 reservationsBtn.onclick = function(element) {
   console.log("getReservations button clicked")
@@ -60,5 +41,5 @@ function processReservations(reservationData=null) {
     return prevTotal + resHours
   }
 
-  
+
 }
