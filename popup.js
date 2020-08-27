@@ -1,5 +1,5 @@
 let reservationsBtn = document.getElementById('resBtn');
-let availableP = document.getElementById('available');
+let message = document.getElementById('message');
 let reservations = null
 
 
@@ -41,5 +41,6 @@ function processReservations(reservationData=null) {
     return prevTotal + resHours
   }
 
+  message.innerText = "You have " + timeAvailable + " nanolab hours available right now."
 
 }
