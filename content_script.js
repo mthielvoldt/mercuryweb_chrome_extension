@@ -48,16 +48,15 @@ function sendReservationsRequest(callback) {
         let table = contentDiv.getElementById('reservationTableForm:reservationViewTable_body')
         console.log(table)
 
-        let equipment = [];
-        let beginTime = [];
-        let endTime = [];
+        let equipment, beginTime, endTime;
+        let reservations = [];
         for ( row of table.children) {
-          equipment.push(row.children[2].firstElementChild.innerText);
-          beginTime.push(row.children[3].firstElementChild.innerText);
-          endTime.push(row.children[4].firstElementChild.innerText);
+          equipment = row.children[2].firstElementChild.innerText;
+          beginTime = row.children[3].firstElementChild.innerText;
+          endTime = row.children[4].firstElementChild.innerText;
+          reservations.push({equipment, beginTime, endTime})
         }
-
-        callback({equipment:equipment, beginTime:beginTime, endTime:endTime})
+        callback(reservations)
       }
     }
   }

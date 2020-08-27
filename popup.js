@@ -19,10 +19,6 @@ changeColor.onclick = function(element) {
   console.log("Changed to green")
 };
 
-function processReservations(reservationData) {
-  console.log(reservationData)
-}
-
 reservationsBtn.onclick = function(element) {
   console.log("getReservations button clicked")
 
@@ -31,14 +27,11 @@ reservationsBtn.onclick = function(element) {
     chrome.tabs.sendMessage(
       tabs[0].id,
       {from: "popup", subject: 'ReservationData'}, processReservations); 
-
-    // chrome.tabs.executeScript(
-    //     tabs[0].id,
-    //     {code: 'sendReservationsRequest()'}, 
-    //     (results) => {
-    //       console.log(results)
-    //     }
-    //   );
   });
-  
+}
+
+function processReservations(reservationData) {
+  console.log(reservationData)
+  // calculate the amount of time available right now. 
+  relevant = reservationData.filter()
 }
