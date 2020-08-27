@@ -37,15 +37,43 @@ function processReservations(reservationData=null) {
 
 function filterFn(reservation, fromDate) {
   cutoffDate = fromDate - 3600000*24*14
-  reservationDate = Date.parse(reservation.endTime)
+  reservationDate = new Date(reservation.endTime)
+  dayOfWeek = reservationDate.getDay()
   within14Days = reservationDate > cutoffDate
-  return (reservation.equipment === 'nanolab') && within14Days
+  weekday = (0 < dayOfWeek) && (dayOfWeek < 6)
+  return (reservation.equipment === 'nanolab') && within14Days && weekday
 }
 
 function reduceFn(prevTotal, reservation) {
-  end   = Date.parse(reservation.endTime)
-  begin = Date.parse(reservation.beginTime) 
-  resHours = (end - begin)/1000/3600
+  const coreBegin = 60*7
+  const coreEnd = 60*19
+  
+  let begin = new Date(reservation.beginTime) 
+  let end   = new Date(reservation.endTime)
+  // we know that begin time is on a weekday.  
+  // begin could be before core hours,
+  // or end could be after core hours
+  beginMinute = begin.getHours()*60 + begin.getMinutes()
+  endMinute = end.getHours()*60 + end.getMinutes()
+
+  // if end was before 7AM, or begin was after 7PM, these were not core-hours
+  if (endMinute <= coreBegin || beginMinute >= coreEnd) {
+    console.log(0)
+    return 0
+  }
+
+  // if begin was before 7:00 AM, calculate as though begin was 7:00 AM
+  if (beginMinute < coreBegin) {
+    beginMinute = coreBegin
+    console.log("adjusted begin forward ", coreBegin - beginMinute, " mins for record: ", reservation)
+  }
+  // if end was after 7:00 PM, calculate as though end was 7:00 pm
+  if (endMinute > coreEnd) {
+    endMinute = coreEnd
+    console.log("adjusted end backward ", endMinute - coreEnd, " mins for record: ", reservation)
+  }
+
+  resHours = (endMinute - beginMinute)/60
   console.log(resHours)
   return prevTotal + resHours
 }
