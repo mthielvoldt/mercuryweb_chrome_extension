@@ -5,6 +5,7 @@ let message1 = document.getElementById('message1');
 let message2 = document.getElementById('message2');
 let reservations = null
 
+// *************** Button events **********************
 checkDateBtn.onclick = (element) => {
   console.log(Date.parse(dateInput.value))
   fromDate = Date.parse(dateInput.value);
@@ -12,6 +13,7 @@ checkDateBtn.onclick = (element) => {
   availableFrom = 24 - relevant.reduce(reduceFn, 0)
   message2.innerText = "You will have " + availableFrom + "h available at the entered time"
 }
+
 reservationsBtn.onclick = (element) => {
   console.log("getReservations button clicked")
 
@@ -27,12 +29,11 @@ function processReservations(reservationData=null) {
   if (reservationData != null) {
     reservations = reservationData
   }
-  console.log(reservations)
   relevant = reservations.filter((res) => filterFn(res, Date.now()))
   console.log(relevant)
   // calculate the amount of time available right now. 
   timeAvailable = 24 - relevant.reduce(reduceFn, 0)
-  message1.innerText = "You have " + timeAvailable + " nanolab hours available right now."
+  message1.innerText = "You have " + timeAvailable + " core nanolab hours available right now."
 }
 
 function filterFn(reservation, fromDate) {
@@ -59,7 +60,7 @@ function reduceFn(prevTotal, reservation) {
   // if end was before 7AM, or begin was after 7PM, these were not core-hours
   if (endMinute <= coreBegin || beginMinute >= coreEnd) {
     console.log(0)
-    return 0
+    return prevTotal
   }
 
   // if begin was before 7:00 AM, calculate as though begin was 7:00 AM

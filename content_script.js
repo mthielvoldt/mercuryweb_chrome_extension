@@ -11,11 +11,15 @@ send "back button"
 // this is global so we can recycle it
 let xhr = new XMLHttpRequest();
 let popupCallback;
-let pastResContent, futureResContent;
+let pastResDoc, futureResDoc;
+let form;
 
 function sendRequest(options) {
-  form = document.getElementById(options.formId);
+  if (options.formId != "") {
+    form = document.getElementById(options.formId);
+  }
   let formData = new FormData(form)
+  console.log(options)
   for ([key, value] of options.extraFormData) {
     formData.append(key, value)
   }
@@ -42,40 +46,32 @@ function sendHistoryRequest() {
   sendRequest(options)
 }
 
-function sendFirstBackRequest() {
-  let options = {
-    url: "https://mercuryweb.berkeley.edu/MercuryWeb/faces/pages/reserve/ReservationView.xhtml",
-    formId: "buttonsForm",
-    extraFormData: [
-      ["javax.faces.partial.execute", "@all"]
-      ["ice.event.captured", "buttonsForm:backButton"]
-    ],
-    callback: firstBackReturned
-  }
-  sendRequest(options)
-}
-
 function sendFutureRequest() {
+  console.log("sendFurtureRequest")
   let options = {
     url: "https://mercuryweb.berkeley.edu/MercuryWeb/faces/pages/reserve/Reservations.xhtml",
-    formId: "panelSixForm",
+    formId: "panelTwoForm",
     extraFormData: [
       ["javax.faces.partial.execute", "@all"],
-      ["ice.event.captured", "panelSixForm:memberOwnLink"]
+      ["ice.event.captured", "panelTwoForm:allLink"]
     ],
     callback: futureReturned
   }
   sendRequest(options)
 }
-function sendSecondBackRequest() {
+function sendBackRequest() {
   let options = {
     url: "https://mercuryweb.berkeley.edu/MercuryWeb/faces/pages/reserve/ReservationView.xhtml",
-    formId: "buttonsForm",
+    formId: "",
     extraFormData: [
-      ["javax.faces.partial.execute", "@all"]
-      ["ice.event.captured", "buttonsForm:backButton"]
+      ["javax.faces.partial.execute", "@all"],
+      ["ice.event.captured", "buttonsForm:backButton"], 
+      ["ice.event.target", "buttonsForm:backButton"],
+      ["buttonsForm", "buttonsForm"],
+      ["javax.faces.source", "buttonsForm:backButton"], 
+
     ],
-    callback: () => {console.log("second back returned.")}
+    callback: BackReturned
   }
   sendRequest(options)
 }
@@ -83,20 +79,17 @@ function sendSecondBackRequest() {
 function historyReturned() {
   if (xhr.readyState === XMLHttpRequest.DONE) {
     if (xhr.status === 200) {
-      console.log(xhr.responseXML)
-
-      pastResContent = xhr.responseXML.getElementById('content_content');
-      parseContent()
-      //sendFirstBackRequest()
+      console.log("pastReturned")
+      pastResDoc = xhr.responseXML;
+      sendFutureRequest()
     }
   }
 }
 
-function firstBackReturned() {
+function BackReturned() {
   if (xhr.readyState === XMLHttpRequest.DONE) {
     if (xhr.status === 200) {
       console.log("first back returned.")
-      sendFutureRequest()
     }
   }
 }
@@ -104,10 +97,10 @@ function firstBackReturned() {
 function futureReturned() {
   if (xhr.readyState === XMLHttpRequest.DONE) {
     if (xhr.status === 200) {
-      console.log(xhr.responseXML)
-      futureResContent = xhr.responseXML.getElementById('content_content');
+      console.log("futureReturned")
+      futureResDoc = xhr.responseXML;
       parseContent()
-      sendSecondBackRequest()
+      window.location.reload()
     }
   }  
 }
@@ -117,23 +110,41 @@ function parseContent() {
   // *** Reservation History ***
   // deal with the CDATA tag to get at the inner elements. 
   // here, childNodes is the right one, because it's a character data node. 
-  cdata = pastResContent.childNodes[0].data
+  
+  //console.log(pastResDoc)
+
+  let pastResContent = pastResDoc.getElementById('content_content')
+  let cdata = pastResContent.childNodes[0].data
   let parser = new DOMParser()
   let contentDiv = parser.parseFromString(cdata, "text/html")
-  let table = contentDiv.getElementById('reservationTableForm:reservationViewTable_body')
-  console.log(table)
+  let pastResTable = contentDiv.getElementById('reservationTableForm:reservationViewTable_body')
+  console.log("past reservations",pastResTable)
 
   let equipment, beginTime, endTime;
   let reservations = [];
-  for (row of table.children) {
+  for (row of pastResTable.children) {
     equipment = row.children[2].firstElementChild.innerText;
     beginTime = row.children[3].firstElementChild.innerText;
     endTime = row.children[4].firstElementChild.innerText;
     reservations.push({ equipment, beginTime, endTime })
   }
+
+  console.log(futureResDoc)
+  let futureResCdata = futureResDoc.getElementById('reservationTableForm:reservationViewTable_body').childNodes[0].data
+  let futureResTableDoc = parser.parseFromString(futureResCdata, "text/xml")
+  futureResTable = futureResTableDoc.getElementById("reservationTableForm:reservationViewTable_body")
+  console.log("future reservations". futureResTable)
+
+  for (row of futureResTable.children) {
+    equipment = row.children[2].textContent;
+    beginTime = row.children[3].textContent;
+    endTime = row.children[4].textContent;
+    reservations.push({ equipment, beginTime, endTime })
+  }
+
   popupCallback(reservations)
-  // for some reason, I need to reload after this xhr call
-  window.location.reload(false);
+
+
 }
 
 chrome.runtime.onMessage.addListener((msg, sender, callback) => {
