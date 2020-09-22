@@ -2,23 +2,28 @@
 <html>
 
 <head>
-  <style>
-    button {
-      height: 30px;
-      outline: none;
-    }
-  </style>
+  <link rel="stylesheet" href="/popup.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
 </head>
 
 <body>
-  <h3>Enter your desired reservation time</h3>
-  <form>
-    <input id="dateInput" type="datetime-local"/>
-  </form>
-  <button id="resBtn">get existing</button>
-  <button id="checkDate">check future</button>
-  <p id="message1">Navigate to main "Reservations" page, then click "get existing" to see available nanolab hours.</p>
-  <p id="message2">After you click "get existing" you can check how many hours will be available at a future date. </p>
+  
+  <div class="container">
+    <h5>Nanolab Core Hour Calculator</h5>
+    <a href="#" id="showInstructions">instructions</a>
+    <button id="resBtn" type="button" class="btn btn-primary">get current core hours</button>
+    <p id="message1">Navigate to main "Reservations" page, then click button above to see available nanolab hours.</p>
+
+    <div>
+      <form>
+        <input id="dateInput" type="datetime-local" value="" step="1800" />
+      </form>
+      <button id="checkDate" type="button" class="btn btn-secondary">calculate</button>
+      <p id="message2">After you click "get existing" you can check how many hours will be available at a future date.
+      </p>
+    </div>
+  </div>
   <script src="popup.js"></script>
 </body>
 
