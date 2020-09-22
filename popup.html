@@ -8,22 +8,82 @@
 </head>
 
 <body>
-  
-  <div class="container">
-    <h5>Nanolab Core Hour Calculator</h5>
-    <a href="#" id="showInstructions">instructions</a>
-    <button id="resBtn" type="button" class="btn btn-primary">get current core hours</button>
-    <p id="message1">Navigate to main "Reservations" page, then click button above to see available nanolab hours.</p>
 
-    <div>
-      <form>
-        <input id="dateInput" type="datetime-local" value="" step="1800" />
-      </form>
-      <button id="checkDate" type="button" class="btn btn-secondary">calculate</button>
-      <p id="message2">After you click "get existing" you can check how many hours will be available at a future date.
-      </p>
+  <div class="container mt-2">
+    <h5>Nanolab Core Hour Calculator</h5>
+    <div class="mainContent">
+      <a href="#" id="showInstructions">instructions</a>
+      <button id="resBtn" type="button" class="btn btn-primary">get current core hours</button>
+      <p id="message1">Navigate to main "Reservations" page, then click button above to see available nanolab hours.</p>
+
+      <div>
+        <form>
+          <div class="d-flex">
+            <input id="dateInput" type="date" class="mr-1" />
+            <input id="timeInput" type="time" step="1800" list="timeList" />
+          </div>
+
+        </form>
+        <button id="checkDate" type="button" class="btn btn-secondary mt-2">calculate</button>
+        <p id="message2">After you click "get existing" you can check how many hours will be available at a future date.
+        </p>
+      </div>
+    </div>
+    <div class="instructions" hidden>
+      <p>This is some text</p>
+
     </div>
   </div>
+  <datalist id="timeList">
+    <option value="00:00"></option>
+    <option value="00:30"></option>
+    <option value="01:00"></option>
+    <option value="01:30"></option>
+    <option value="02:00"></option>
+    <option value="02:30"></option>
+    <option value="03:00"></option>
+    <option value="03:30"></option>
+    <option value="04:00"></option>
+    <option value="04:30"></option>
+    <option value="05:00"></option>
+    <option value="05:30"></option>
+    <option value="06:00"></option>
+    <option value="06:30"></option>
+    <option value="07:00"></option>
+    <option value="07:30"></option>
+    <option value="08:00"></option>
+    <option value="08:30"></option>
+    <option value="09:00"></option>
+    <option value="09:30"></option>
+    <option value="10:00"></option>
+    <option value="10:30"></option>
+    <option value="11:00"></option>
+    <option value="11:30"></option>
+    <option value="12:00"></option>
+    <option value="12:30"></option>
+    <option value="13:00"></option>
+    <option value="13:30"></option>
+    <option value="14:00"></option>
+    <option value="14:30"></option>
+    <option value="15:00"></option>
+    <option value="15:30"></option>
+    <option value="16:00"></option>
+    <option value="16:30"></option>
+    <option value="17:00"></option>
+    <option value="17:30"></option>
+    <option value="18:00"></option>
+    <option value="18:30"></option>
+    <option value="19:00"></option>
+    <option value="19:30"></option>
+    <option value="20:00"></option>
+    <option value="20:30"></option>
+    <option value="21:00"></option>
+    <option value="21:30"></option>
+    <option value="22:00"></option>
+    <option value="22:30"></option>
+    <option value="23:00"></option>
+    <option value="23:30"></option>
+  </datalist>
   <script src="popup.js"></script>
 </body>
 

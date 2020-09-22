@@ -7,9 +7,14 @@ let reservations = null
 
 // *************** Button events **********************
 checkDateBtn.onclick = (element) => {
-  console.log(Date.parse(dateInput.value))
-  fromDate = Date.parse(dateInput.value);
-  let relevant = reservations.filter((res) => filterFn(res, fromDate))
+  let date = dateInput.value
+  let time = timeInput.value
+  let dateTime = date + 'T' + time + ':00.000Z'
+  console.log(dateTime)
+  dateTime = Date.parse(dateTime)
+  console.log(dateTime)
+  console.log(Date.now())
+  let relevant = reservations.filter((res) => filterFn(res, dateTime))
   availableFrom = 24 - relevant.reduce(reduceFn, 0)
   message2.innerText = "You will have " + availableFrom + "h available at the entered time"
 }
@@ -24,6 +29,21 @@ reservationsBtn.onclick = (element) => {
       {from: "popup", subject: 'ReservationData'}, processReservations); 
   });
 }
+
+// *************** Date-Time Input ******************
+
+let now = new Date()
+let tzOffset = now.getTimezoneOffset()
+now.setMinutes(now.getMinutes() - tzOffset)
+now = now.toJSON()
+let time = now.slice(11, 16)
+let date = now.slice(0,10)
+console.log(now)
+console.log(date)
+console.log(time)
+
+dateInput.value = date
+timeInput.value = time
 
 function processReservations(reservationData=null) {
   if (reservationData != null) {
