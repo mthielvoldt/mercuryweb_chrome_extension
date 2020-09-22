@@ -1,6 +1,6 @@
 {
   "name": "MercuryWeb reservation calculator",
-  "version": "0.1",
+  "version": "0.3",
   "description": "Easily view remaining core-hour reservation time.",
   "permissions": [
     "storage",

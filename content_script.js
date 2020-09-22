@@ -123,23 +123,26 @@ function parseContent() {
   let equipment, beginTime, endTime;
   let reservations = [];
   for (row of pastResTable.children) {
-    equipment = row.children[2].firstElementChild.innerText;
-    beginTime = row.children[3].firstElementChild.innerText;
-    endTime = row.children[4].firstElementChild.innerText;
-    reservations.push({ equipment, beginTime, endTime })
+    if (row.children.length >= 5) {
+      equipment = row.children[2].firstElementChild.innerText;
+      beginTime = row.children[3].firstElementChild.innerText;
+      endTime = row.children[4].firstElementChild.innerText;
+      reservations.push({ equipment, beginTime, endTime })
+    }
   }
 
-  console.log(futureResDoc)
   let futureResCdata = futureResDoc.getElementById('reservationTableForm:reservationViewTable_body').childNodes[0].data
   let futureResTableDoc = parser.parseFromString(futureResCdata, "text/xml")
   futureResTable = futureResTableDoc.getElementById("reservationTableForm:reservationViewTable_body")
-  console.log("future reservations". futureResTable)
+  console.log("future reservations", futureResTable)
 
   for (row of futureResTable.children) {
-    equipment = row.children[2].textContent;
-    beginTime = row.children[3].textContent;
-    endTime = row.children[4].textContent;
-    reservations.push({ equipment, beginTime, endTime })
+    if ( row.children.length >= 5){
+      equipment = row.children[2].textContent;
+      beginTime = row.children[3].textContent;
+      endTime = row.children[4].textContent;
+      reservations.push({ equipment, beginTime, endTime })
+    }
   }
 
   popupCallback(reservations)
