@@ -18,7 +18,7 @@ checkDateBtn.onclick = (element) => {
   console.log(Date.now())
   let relevant = reservations.filter((res) => filterFn(res, dateTime))
   availableFrom = 24 - relevant.reduce(reduceFn, 0)
-  message2.innerText = "You will have " + availableFrom + "h available at the entered time"
+  message2.innerHTML = "You will have <strong>" + availableFrom + "h</strong> available at the entered time"
 }
 
 reservationsBtn.onclick = (element) => {
@@ -70,7 +70,7 @@ function processReservations(reservationData=null) {
   console.log(relevant)
   // calculate the amount of time available right now. 
   timeAvailable = 24 - relevant.reduce(reduceFn, 0)
-  message1.innerText = "You have " + timeAvailable + " core nanolab hours available right now."
+  message1.innerHTML = "You have <strong>" + timeAvailable + "</strong> core nanolab hours available right now."
 }
 
 function filterFn(reservation, fromDate) {
