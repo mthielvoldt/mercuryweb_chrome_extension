@@ -11,9 +11,9 @@
 
   <div class="container mt-2">
     <h5>Nanolab Core Hour Calculator</h5>
-    <div class="mainContent">
-      <a href="#" id="showInstructions">instructions</a>
-      <button id="resBtn" type="button" class="btn btn-primary">get current core hours</button>
+    <div id="mainContent">
+      <a href="#" id="showInstructionsLink">instructions</a>
+      <button id="resBtn" type="button" class="btn btn-primary w-100">get current core hours</button>
       <p id="message1">Navigate to main "Reservations" page, then click button above to see available nanolab hours.</p>
 
       <div>
@@ -24,16 +24,24 @@
           </div>
 
         </form>
-        <button id="checkDate" type="button" class="btn btn-secondary mt-2">calculate</button>
+        <button id="checkDate" type="button" class="btn btn-secondary mt-2 w-100">calculate</button>
         <p id="message2">After you click "get existing" you can check how many hours will be available at a future date.
         </p>
       </div>
     </div>
-    <div class="instructions" hidden>
-      <p>This is some text</p>
-
+    <div id="instructions" hidden>
+      <ol>
+        <li>Log into mercuryweb</li>
+        <li>Navigate to main Reservations page. <a id="imageLink" href="#"> <em>show me</em> </a></li>
+        <img id="reservationsImage" src="/images/reservations_page.png" alt="reservations page" hidden width="450"/>
+        <li>Click "get current core hours" button in extension window.</li>
+        <li><em>(optional)</em> After step 3, you may enter a future date and click "calculate" to check how many core hours will be available at that future time.</li>
+      </ol>
+      <button id="backBtn" class="btn btn-sm btn-secondary mb-2 ml-4">back</button>
+      
     </div>
   </div>
+
   <datalist id="timeList">
     <option value="00:00"></option>
     <option value="00:30"></option>

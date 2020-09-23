@@ -1,5 +1,8 @@
 let reservationsBtn = document.getElementById('resBtn');
 let checkDateBtn = document.getElementById('checkDate');
+let instructionsLink = document.getElementById('showInstructionsLink');
+let imageLink = document.getElementById('imageLink');
+let backBtn = document.getElementById('backBtn');
 let dateInput = document.getElementById('dateInput');
 let message1 = document.getElementById('message1');
 let message2 = document.getElementById('message2');
@@ -10,7 +13,6 @@ checkDateBtn.onclick = (element) => {
   let date = dateInput.value
   let time = timeInput.value
   let dateTime = date + 'T' + time + ':00.000Z'
-  console.log(dateTime)
   dateTime = Date.parse(dateTime)
   console.log(dateTime)
   console.log(Date.now())
@@ -28,6 +30,21 @@ reservationsBtn.onclick = (element) => {
       tabs[0].id,
       {from: "popup", subject: 'ReservationData'}, processReservations); 
   });
+}
+
+instructionsLink.onclick = (element) => {
+  document.getElementById('mainContent').setAttribute('hidden', '');
+  document.getElementById('instructions').removeAttribute('hidden');
+}
+backBtn.onclick = (e) => {
+  document.getElementById('mainContent').removeAttribute('hidden')
+  document.getElementById('instructions').setAttribute('hidden', '')
+}
+
+imageLink.onclick = (e) => {
+  e.preventDefault()
+  document.getElementById('reservationsImage').removeAttribute('hidden')
+  imageLink.setAttribute('hidden', '')
 }
 
 // *************** Date-Time Input ******************
