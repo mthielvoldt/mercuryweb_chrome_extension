@@ -90,12 +90,54 @@ function processReservations(reservationData = null) {
   cropToCoreHours(relevant)
   console.log(relevant)
 
+  // find maximum in sliding winow 
+  maxHours = findMaxHours(relevant)
+
   // calculate the amount of time available right now. 
   timeAvailable = 24 - relevant.reduce(reduceFn, 0)
   message1.innerHTML = "You have <strong>" + timeAvailable + "</strong> core nanolab hours available right now."
   checkDateBtn.classList.remove('btn-secondary');
   checkDateBtn.classList.add('btn-primary');
 
+}
+
+
+
+function findMaxHours(reservations, now) {
+  // calculate with window ending at current time. 
+  let maxSum = totalInWindow(reservations, now)
+
+  let firstExcluded = 0;
+  for (; firstExcluded < reservations.length; firstExcluded++) {
+
+  }
+
+  // move wBegin to the nearest of: 
+  // the beginning of the first included reservation
+  // the end of the first non-included reservation
+  while (true) {
+
+  }
+}
+
+function totalInWindow(reservations, wEnd) {
+  let wBegin = wEnd - 1000 * 3600 * 24 * 14
+  resEnd = res.end.getTime()
+  resBegin = res.begin.getTime()
+
+  let totalHours = 0
+  let msDur
+  reservations.forEach(res => {
+    if (resBegin >= wEnd) {
+      break
+    }
+    if (resEnd <= wBegin) {
+      continue
+    } 
+    msDur = min(resEnd, wEnd) - max(resBegin, wBegin)
+    totalHours += msDur / 1000 / 3600
+  })
+  return totalHours
 }
 
 function convertDates(reservations) {
