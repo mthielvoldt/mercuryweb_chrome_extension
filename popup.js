@@ -83,6 +83,9 @@ function processReservations(reservationData=null) {
   // calculate the amount of time available right now. 
   timeAvailable = 24 - relevant.reduce(reduceFn, 0)
   message1.innerHTML = "You have <strong>" + timeAvailable + "</strong> core nanolab hours available right now."
+  checkDateBtn.classList.remove('btn-secondary');
+  checkDateBtn.classList.add('btn-primary');
+
 }
 
 function filterFn(reservation, fromDate) {
