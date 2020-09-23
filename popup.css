@@ -4,3 +4,58 @@ h5 { white-space: nowrap;}
 .btn {
   margin-bottom: 5px;
 }
+
+#calculateAlert {
+  position: absolute;
+  z-index: 1;
+  top: 190px;
+  left: 50px;
+  width: 200px;
+
+}
+
+#instructions {
+  min-width: 530px;
+}
+
+/* Tooltip container */
+.tooltip-div {
+  z-index: 1;
+  position: relative;
+  display: block;
+  border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+}
+
+/* Tooltip text */
+#tooltip {
+  visibility: hidden;
+  width: 220px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+
+  /* Position the tooltip text */
+  position: absolute;
+  z-index: 1;
+  bottom: 110%;
+  left: 30%;
+  margin-left: -60px;
+
+  /* Fade in tooltip */
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+/* Tooltip arrow */
+#tooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}

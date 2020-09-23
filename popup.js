@@ -10,6 +10,18 @@ let reservations = null
 
 // *************** Button events **********************
 checkDateBtn.onclick = (element) => {
+
+  if (reservations === null) {
+    let alert = document.getElementById('tooltip')
+    alert.style.visibility = "visible";
+    alert.style.opacity = "1";
+    setTimeout( () => {
+      alert.style.visibility = "hidden";
+      alert.style.opacity = "0";
+    }, 2500)
+    return
+  }
+
   let date = dateInput.value
   let time = timeInput.value
   let dateTime = date + 'T' + time + ':00.000Z'

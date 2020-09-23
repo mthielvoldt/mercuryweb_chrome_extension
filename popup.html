@@ -25,12 +25,16 @@
               <input id="timeInput" type="time" step="1800" list="timeList" />
             </div>
           </form>
-          <button id="checkDate" type="button" class="btn btn-secondary mt-2 w-100">calculate</button>
-          <p id="message2">After you click "get existing" you can check how many hours will be available at a future
+          <div class="tooltip-div">
+            <button id="checkDate" type="button" class="btn btn-secondary mt-2 w-100">calculate</button>
+            <span id="tooltip">Click "get current core hours" first</span>
+          </div>
+          <p id="message2">After you click "get current core hours" you can check how many hours will be available at a future
             date.</p>
         </div>
       </div>
     </div>
+
     <div id="instructions" hidden>
       <ol>
         <li>Log into mercuryweb</li>
