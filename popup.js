@@ -67,13 +67,11 @@ now.setMinutes(now.getMinutes() - tzOffset)
 now = now.toJSON()
 let time = now.slice(11, 16)
 let date = now.slice(0,10)
-console.log(now)
-console.log(date)
-console.log(time)
 
 dateInput.value = date
 timeInput.value = time
 
+// Gets called when content_script returns the table
 function processReservations(reservationData=null) {
   if (reservationData != null) {
     reservations = reservationData
@@ -88,13 +86,29 @@ function processReservations(reservationData=null) {
 
 }
 
-function filterFn(reservation, fromDate) {
-  cutoffDate = fromDate - 3600000*24*14
-  reservationDate = new Date(reservation.endTime)
-  dayOfWeek = reservationDate.getDay()
-  within14Days = reservationDate > cutoffDate
-  weekday = (0 < dayOfWeek) && (dayOfWeek < 6)
-  return (reservation.equipment === 'nanolab') && within14Days && weekday
+function filterFn(reservation, fromTime) {
+  let cutoffTime = fromTime - 3600000*24*14
+  let resEndDate = new Date(reservation.endTime)
+  let resBeginDate = new Date(reservation.beginTime)
+  let resEndTime = resEndDate.getTime()
+
+  let within14Days = resEndTime > cutoffTime
+
+  let dayOfWeek = resEndDate.getDay()
+  let onWeekday = (0 < dayOfWeek) && (dayOfWeek < 6)
+  
+  let resBeginMinute = resBeginDate.getHours()*60 + resBeginDate.getMinutes()
+  let resEndMinute = resEndDate.getHours()*60 + resEndDate.getMinutes()
+  const coreBegin = 60*7
+  const coreEnd = 60*19
+  let hasCoreHours = (resEndMinute > coreBegin) && (resBeginMinute < coreEnd)
+
+  return (
+    (reservation.equipment === 'nanolab') 
+    && within14Days 
+    && onWeekday
+    && hasCoreHours
+  )
 }
 
 function reduceFn(prevTotal, reservation) {
