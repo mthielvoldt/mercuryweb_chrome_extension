@@ -6,7 +6,10 @@ let backBtn = document.getElementById('backBtn');
 let dateInput = document.getElementById('dateInput');
 let message1 = document.getElementById('message1');
 let message2 = document.getElementById('message2');
+
 let reservations = null
+const coreBegin = 60 * 7
+const coreEnd = 60 * 19
 
 // *************** Button events **********************
 checkDateBtn.onclick = (element) => {
@@ -15,7 +18,7 @@ checkDateBtn.onclick = (element) => {
     let alert = document.getElementById('tooltip')
     alert.style.visibility = "visible";
     alert.style.opacity = "1";
-    setTimeout( () => {
+    setTimeout(() => {
       alert.style.visibility = "hidden";
       alert.style.opacity = "0";
     }, 2500)
@@ -36,11 +39,11 @@ checkDateBtn.onclick = (element) => {
 reservationsBtn.onclick = (element) => {
   console.log("getReservations button clicked")
 
-  chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     // use a message to trigger the content_script to get reservations. 
     chrome.tabs.sendMessage(
       tabs[0].id,
-      {from: "popup", subject: 'ReservationData'}, processReservations); 
+      { from: "popup", subject: 'ReservationData' }, processReservations);
   });
 }
 
@@ -66,18 +69,27 @@ let tzOffset = now.getTimezoneOffset()
 now.setMinutes(now.getMinutes() - tzOffset)
 now = now.toJSON()
 let time = now.slice(11, 16)
-let date = now.slice(0,10)
+let date = now.slice(0, 10)
 
 dateInput.value = date
 timeInput.value = time
 
 // Gets called when content_script returns the table
-function processReservations(reservationData=null) {
+function processReservations(reservationData = null) {
   if (reservationData != null) {
     reservations = reservationData
   }
+
+  // convert time strings to Date objects
+  convertDates(reservations)
+
   relevant = reservations.filter((res) => filterFn(res, Date.now()))
   console.log(relevant)
+
+  // prune any non-core hours from reservations
+  cropToCoreHours(relevant)
+  console.log(relevant)
+
   // calculate the amount of time available right now. 
   timeAvailable = 24 - relevant.reduce(reduceFn, 0)
   message1.innerHTML = "You have <strong>" + timeAvailable + "</strong> core nanolab hours available right now."
@@ -86,42 +98,60 @@ function processReservations(reservationData=null) {
 
 }
 
-function filterFn(reservation, fromTime) {
-  let cutoffTime = fromTime - 3600000*24*14
-  let resEndDate = new Date(reservation.endTime)
-  let resBeginDate = new Date(reservation.beginTime)
-  let resEndTime = resEndDate.getTime()
+function convertDates(reservations) {
+  reservations.forEach((res) => {
+    res.begin = new Date(res.beginTime);
+    res.end = new Date(res.endTime);
+  })
+}
 
-  let within14Days = resEndTime > cutoffTime
+function cropToCoreHours(reservations) {
+  reservations.forEach((res, i) => {
+    let beginMinute = res.begin.getHours() * 60 + res.begin.getMinutes();
+    let endMinute = res.end.getHours() * 60 + res.end.getMinutes();
 
-  let dayOfWeek = resEndDate.getDay()
+    if (beginMinute < coreBegin) {
+      res.begin = new Date(
+        res.begin.getTime() + (coreBegin - beginMinute) * 60000);
+      console.log(`cropped begin of ${i}`)
+    }
+    if (endMinute > coreEnd) {
+      res.begin = new Date(
+        res.end.getTime() - (endMinute - coreEnd) * 60000);
+      console.log(`cropped end of ${i}`)
+    }
+  })
+}
+
+function filterFn(res, fromTime) {
+  let cutoffTime = fromTime - 3600000 * 24 * 14
+
+  let within14Days = res.end.getTime() > cutoffTime
+
+  let dayOfWeek = res.end.getDay()
   let onWeekday = (0 < dayOfWeek) && (dayOfWeek < 6)
-  
-  let resBeginMinute = resBeginDate.getHours()*60 + resBeginDate.getMinutes()
-  let resEndMinute = resEndDate.getHours()*60 + resEndDate.getMinutes()
-  const coreBegin = 60*7
-  const coreEnd = 60*19
-  let hasCoreHours = (resEndMinute > coreBegin) && (resBeginMinute < coreEnd)
+
+  let beginMinute = res.begin.getHours() * 60 + res.begin.getMinutes()
+  let endMinute = res.end.getHours() * 60 + res.end.getMinutes()
+  let hasCoreHours = (endMinute > coreBegin) && (beginMinute < coreEnd)
 
   return (
-    (reservation.equipment === 'nanolab') 
-    && within14Days 
+    (res.equipment === 'nanolab')
+    && within14Days
     && onWeekday
     && hasCoreHours
   )
 }
 
 function reduceFn(prevTotal, reservation) {
-  const coreBegin = 60*7
-  const coreEnd = 60*19
-  
-  let begin = new Date(reservation.beginTime) 
-  let end   = new Date(reservation.endTime)
+
+  let begin = new Date(reservation.beginTime)
+  let end = new Date(reservation.endTime)
   // we know that begin time is on a weekday.  
   // begin could be before core hours,
   // or end could be after core hours
-  beginMinute = begin.getHours()*60 + begin.getMinutes()
-  endMinute = end.getHours()*60 + end.getMinutes()
+  beginMinute = begin.getHours() * 60 + begin.getMinutes()
+  endMinute = end.getHours() * 60 + end.getMinutes()
 
   // if end was before 7AM, or begin was after 7PM, these were not core-hours
   if (endMinute <= coreBegin || beginMinute >= coreEnd) {
@@ -140,7 +170,7 @@ function reduceFn(prevTotal, reservation) {
     console.log("adjusted end backward ", endMinute - coreEnd, " mins for record: ", reservation)
   }
 
-  resHours = (endMinute - beginMinute)/60
+  resHours = (endMinute - beginMinute) / 60
   console.log(resHours)
   return prevTotal + resHours
 }
