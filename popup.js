@@ -38,6 +38,9 @@ checkDateBtn.onclick = (element) => {
 
 reservationsBtn.onclick = (element) => {
   console.log("getReservations button clicked")
+  if (reservations != null) {
+    processReservations()
+  }
 
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     // use a message to trigger the content_script to get reservations. 
@@ -91,53 +94,75 @@ function processReservations(reservationData = null) {
   console.log(relevant)
 
   // find maximum in sliding winow 
-  maxHours = findMaxHours(relevant)
+  let maxHours = findMaxHours(relevant, Date.now())
 
   // calculate the amount of time available right now. 
-  timeAvailable = 24 - relevant.reduce(reduceFn, 0)
+  let timeAvailable = 24 - maxHours;
   message1.innerHTML = "You have <strong>" + timeAvailable + "</strong> core nanolab hours available right now."
   checkDateBtn.classList.remove('btn-secondary');
   checkDateBtn.classList.add('btn-primary');
 
 }
 
-
-
 function findMaxHours(reservations, now) {
   // calculate with window ending at current time. 
-  let maxSum = totalInWindow(reservations, now)
+  let maxSum, last, deltaUsingEnd, deltaUsingStart;
+  [maxSum, last] = totalInWindow(reservations, now)
+  last--; // totalInWindow actually returns first index after the last one. 
 
-  let firstExcluded = 0;
-  for (; firstExcluded < reservations.length; firstExcluded++) {
-
-  }
-
+  let lastRes = reservations[reservations.length-1];
+  let wEnd = now;
+  let wBegin = wEnd - 1000*3600*24*14;
+  let first = 0;
+  
   // move wBegin to the nearest of: 
-  // the beginning of the first included reservation
-  // the end of the first non-included reservation
-  while (true) {
+  // the beginning of the first reservation in the window
+  // the end of the first reservation that is after the window
+  while (wEnd < lastRes.end.getTime()) { 
+    //
+    deltaUsingStart = reservations[first].begin.getTime() - wBegin;
+    if (deltaUsingStart <= 0) {
+      deltaUsingStart = reservations[first+1].begin.getTime() - wBegin;
+    }
+    deltaUsingEnd = reservations[last].end.getTime() - wEnd;
+    // our present wEnd may either be after a 
+    if (deltaUsingEnd <= 0 && (last+1) < reservations.length) {
+      deltaUsingEnd = reservations[last+1].end.getTime() - wEnd;
+    }
 
+    if (deltaUsingStart <= deltaUsingEnd || deltaUsingEnd <= 0) {
+      wEnd += deltaUsingStart;
+      first++;
+    } else {
+      wEnd += deltaUsingEnd;
+      // don't need to increment last - it gets done below
+    }
+    [thisSum, last] = totalInWindow(reservations, wEnd);
+    last--;
+    maxSum = Math.max(maxSum, thisSum)
   }
+  return maxSum
 }
 
 function totalInWindow(reservations, wEnd) {
   let wBegin = wEnd - 1000 * 3600 * 24 * 14
-  resEnd = res.end.getTime()
-  resBegin = res.begin.getTime()
 
   let totalHours = 0
-  let msDur
-  reservations.forEach(res => {
+  let msDur;
+  let i;
+  for (i = 0; i < reservations.length; i++) {
+    resBegin = reservations[i].begin.getTime()
+    resEnd = reservations[i].end.getTime()
     if (resBegin >= wEnd) {
       break
     }
     if (resEnd <= wBegin) {
       continue
     } 
-    msDur = min(resEnd, wEnd) - max(resBegin, wBegin)
+    msDur = Math.min(resEnd, wEnd) - Math.max(resBegin, wBegin)
     totalHours += msDur / 1000 / 3600
-  })
-  return totalHours
+  }
+  return [totalHours, i]
 }
 
 function convertDates(reservations) {
@@ -183,36 +208,4 @@ function filterFn(res, fromTime) {
     && onWeekday
     && hasCoreHours
   )
-}
-
-function reduceFn(prevTotal, reservation) {
-
-  let begin = new Date(reservation.beginTime)
-  let end = new Date(reservation.endTime)
-  // we know that begin time is on a weekday.  
-  // begin could be before core hours,
-  // or end could be after core hours
-  beginMinute = begin.getHours() * 60 + begin.getMinutes()
-  endMinute = end.getHours() * 60 + end.getMinutes()
-
-  // if end was before 7AM, or begin was after 7PM, these were not core-hours
-  if (endMinute <= coreBegin || beginMinute >= coreEnd) {
-    console.log(0)
-    return prevTotal
-  }
-
-  // if begin was before 7:00 AM, calculate as though begin was 7:00 AM
-  if (beginMinute < coreBegin) {
-    beginMinute = coreBegin
-    console.log("adjusted begin forward ", coreBegin - beginMinute, " mins for record: ", reservation)
-  }
-  // if end was after 7:00 PM, calculate as though end was 7:00 pm
-  if (endMinute > coreEnd) {
-    endMinute = coreEnd
-    console.log("adjusted end backward ", endMinute - coreEnd, " mins for record: ", reservation)
-  }
-
-  resHours = (endMinute - beginMinute) / 60
-  console.log(resHours)
-  return prevTotal + resHours
 }
