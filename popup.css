@@ -5,13 +5,9 @@ h5 { white-space: nowrap;}
   margin-bottom: 5px;
 }
 
-#calculateAlert {
-  position: absolute;
-  z-index: 1;
-  top: 190px;
-  left: 50px;
-  width: 200px;
-
+#version {
+  color: #BBB;
+  font-size: 0.85rem;
 }
 
 #instructions {
