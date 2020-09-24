@@ -27,12 +27,13 @@ checkDateBtn.onclick = (element) => {
 
   let date = dateInput.value
   let time = timeInput.value
-  let dateTime = date + 'T' + time + ':00.000Z'
-  dateTime = Date.parse(dateTime)
-  console.log(dateTime)
-  console.log(Date.now())
-  let relevant = reservations.filter((res) => filterFn(res, dateTime))
-  availableFrom = 24 - relevant.reduce(reduceFn, 0)
+  let dateTimeISO = date + 'T' + time + ':00.000Z'
+  let specifiedDate = new Date(dateTimeISO)
+  let tzOffset = specifiedDate.getTimezoneOffset()
+  specifiedDate.setMinutes(specifiedDate.getMinutes() + tzOffset)
+  console.log(specifiedDate)
+  
+  availableFrom = 24 - findMaxHours(reservations, specifiedDate.getTime())
   message2.innerHTML = "You will have <strong>" + availableFrom + "h</strong> available at the entered time"
 }
 
@@ -68,9 +69,18 @@ imageLink.onclick = (e) => {
 // *************** Date-Time Input ******************
 
 let now = new Date()
+
+// round up to the next 30 minutes
+if (now.getMinutes() > 30) {
+  now.setHours(now.getHours() + 1)
+  now.setMinutes(0)
+} else {
+  now.setMinutes(30)
+}
 let tzOffset = now.getTimezoneOffset()
 now.setMinutes(now.getMinutes() - tzOffset)
 now = now.toJSON()
+
 let time = now.slice(11, 16)
 let date = now.slice(0, 10)
 
@@ -86,15 +96,14 @@ function processReservations(reservationData = null) {
   // convert time strings to Date objects
   convertDates(reservations)
 
-  relevant = reservations.filter((res) => filterFn(res, Date.now()))
-  console.log(relevant)
+  reservations = reservations.filter((res) => filterFn(res, Date.now()))
 
   // prune any non-core hours from reservations
-  cropToCoreHours(relevant)
-  console.log(relevant)
+  cropToCoreHours(reservations)
+  console.log(reservations)
 
   // find maximum in sliding winow 
-  let maxHours = findMaxHours(relevant, Date.now())
+  let maxHours = findMaxHours(reservations, Date.now())
 
   // calculate the amount of time available right now. 
   let timeAvailable = 24 - maxHours;
@@ -111,15 +120,15 @@ function findMaxHours(reservations, now) {
   last--; // totalInWindow actually returns first index after the last one. 
 
   let lastRes = reservations[reservations.length-1];
-  let wEnd = now;
-  let wBegin = wEnd - 1000*3600*24*14;
+  let wBegin, wEnd = now;
   let first = 0;
   
   // move wBegin to the nearest of: 
   // the beginning of the first reservation in the window
   // the end of the first reservation that is after the window
   while (wEnd < lastRes.end.getTime()) { 
-    //
+    wBegin = wEnd - 1209600000
+
     deltaUsingStart = reservations[first].begin.getTime() - wBegin;
     if (deltaUsingStart <= 0) {
       deltaUsingStart = reservations[first+1].begin.getTime() - wBegin;
@@ -129,7 +138,7 @@ function findMaxHours(reservations, now) {
     if (deltaUsingEnd <= 0 && (last+1) < reservations.length) {
       deltaUsingEnd = reservations[last+1].end.getTime() - wEnd;
     }
-
+    console.log(deltaUsingStart/3600000, deltaUsingEnd/3600000)
     if (deltaUsingStart <= deltaUsingEnd || deltaUsingEnd <= 0) {
       wEnd += deltaUsingStart;
       first++;
@@ -162,6 +171,7 @@ function totalInWindow(reservations, wEnd) {
     msDur = Math.min(resEnd, wEnd) - Math.max(resBegin, wBegin)
     totalHours += msDur / 1000 / 3600
   }
+  console.log(totalHours, new Date(wBegin).toLocaleString("en-US"), new Date(wEnd).toLocaleString("en-US"))
   return [totalHours, i]
 }
 
