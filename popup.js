@@ -15,13 +15,7 @@ const coreEnd = 60 * 19
 checkDateBtn.onclick = (element) => {
 
   if (reservations === null) {
-    let alert = document.getElementById('tooltip')
-    alert.style.visibility = "visible";
-    alert.style.opacity = "1";
-    setTimeout(() => {
-      alert.style.visibility = "hidden";
-      alert.style.opacity = "0";
-    }, 2500)
+    flashTooltip('calc-btn-tooltip')
     return
   }
 
@@ -91,6 +85,8 @@ timeInput.value = time
 function processReservations(reservationData = null) {
   if (reservationData != null) {
     reservations = reservationData
+  } else {
+    flashTooltip('current-hours-btn-tooltip')
   }
 
   // convert time strings to Date objects
@@ -218,4 +214,14 @@ function filterFn(res, fromTime) {
     && onWeekday
     && hasCoreHours
   )
+}
+
+function flashTooltip(id) {
+  let alert = document.getElementById(id)
+  alert.style.visibility = "visible";
+  alert.style.opacity = "1";
+  setTimeout(() => {
+    alert.style.visibility = "hidden";
+    alert.style.opacity = "0";
+  }, 2500)
 }

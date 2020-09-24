@@ -13,7 +13,11 @@
     <h4>Nanolab Core Hour Calculator</h4>
     <div id="mainContent">
       <a href="#" id="showInstructionsLink">instructions</a>
-      <button id="resBtn" type="button" class="btn btn-primary w-100">get current core hours</button>
+      <div class="tooltip2">
+        <button id="resBtn" type="button" class="btn btn-primary w-100">get current core hours</button>
+        <span id="current-hours-btn-tooltip" class="tooltip2">Something is wrong. Are you on the reservations page?</span>
+      </div>
+      
       <p id="message1">Navigate to main "Reservations" page, then click button above to see available nanolab hours.</p>
 
       <div class="card mb-3">
@@ -25,12 +29,12 @@
               <input id="timeInput" type="time" step="1800" list="timeList" />
             </div>
           </form>
-          <div class="tooltip-div">
+          <div class="tooltip2">
             <button id="checkDate" type="button" class="btn btn-secondary mt-2 w-100">calculate</button>
-            <span id="tooltip">Click "get current core hours" first</span>
+            <span id="calc-btn-tooltip" class="tooltip2">Click "get current core hours" first</span>
           </div>
-          <p id="message2">After you click "get current core hours" you can check how many hours will be available at a future
-            date.</p>
+          <p id="message2">After you click "get current core hours" you can check how many hours will be available at a
+            future date.</p>
         </div>
       </div>
     </div>

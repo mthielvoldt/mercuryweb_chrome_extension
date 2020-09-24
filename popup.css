@@ -19,14 +19,14 @@ h5 { white-space: nowrap;}
 }
 
 /* Tooltip container */
-.tooltip-div {
+div.tooltip2 {
   z-index: 1;
   position: relative;
   display: block;
 }
 
 /* Tooltip text */
-#tooltip {
+span.tooltip2 {
   visibility: hidden;
   width: 220px;
   background-color: #555;
@@ -48,7 +48,7 @@ h5 { white-space: nowrap;}
 }
 
 /* Tooltip arrow */
-#tooltip::after {
+span.tooltip2::after {
   content: "";
   position: absolute;
   top: 100%;
